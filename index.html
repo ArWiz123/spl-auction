@@ -1,0 +1,1491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SPL Season 5 Cricket Auction</title>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<style>
+:root{--bg:#06111f;--panel:#0d1b2e;--panel2:#10243b;--gold:#facc15;--muted:#94a3b8;--border:#29435f;--green:#16a34a;--red:#dc2626}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#123052,#06111f 50%,#020711);color:#f8fafc;font:14px Arial,sans-serif}
+button,input,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.45;cursor:not-allowed}
+.header{padding:15px 22px;background:#030b16;border-bottom:2px solid var(--gold);display:flex;justify-content:space-between;align-items:center;gap:15px}
+.brand{display:flex;align-items:center;gap:14px}.spl-logo{width:68px;height:68px;object-fit:contain}.brand h1{margin:0;color:var(--gold);font-size:25px}.brand p{margin:4px 0;color:var(--muted)}
+.container{max-width:1500px;margin:auto;padding:20px}.section{background:rgba(13,27,46,.95);border:1px solid var(--border);border-radius:15px;padding:18px;margin-bottom:18px}
+h2{color:var(--gold);margin:0 0 15px}.btn{border:0;border-radius:8px;padding:10px 15px;font-weight:800}.gold{background:var(--gold);color:#111827}.dark{background:#172b42;color:white;border:1px solid #3a5874}.green{background:var(--green);color:white}.danger{background:var(--red);color:white}
+.actions{display:flex;gap:9px;flex-wrap:wrap}.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}
+.setup{background:#08182b;border:1px solid var(--border);border-radius:10px;padding:13px}.setup h3{margin:0 0 12px;color:var(--gold)}
+label{display:block;color:var(--muted);font-size:12px;font-weight:700;margin:8px 0 5px}input,select{width:100%;padding:10px;background:#040d18;border:1px solid #3a5874;color:white;border-radius:7px}
+.colors{display:flex;gap:7px}.color{width:28px;height:28px;border-radius:50%;border:3px solid transparent}.color.sel{border-color:#fff;box-shadow:0 0 0 2px var(--gold)}
+.redc{background:#dc2626}.bluec{background:#2563eb}.yellowc{background:#eab308}.blackc{background:#111827}
+.notice{padding:10px;border-radius:8px;margin-top:12px;font-weight:700}.warn{background:#3b2106;border:1px solid #a16207;color:#fde68a}.ok{background:#062a16;border:1px solid #15803d;color:#bbf7d0}
+.folder{border:2px dashed #41617e;padding:18px;border-radius:10px;text-align:center;background:#08182b}.playerlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(105px,1fr));gap:8px;max-height:230px;overflow:auto}.mini{background:#06111f;border:1px solid var(--border);padding:6px;border-radius:7px;text-align:center;font-size:11px}.mini img{width:100%;height:80px;object-fit:contain;background:#000;border-radius:5px}
+.round{text-align:center;padding:12px;border:1px solid #41617e;border-radius:10px;background:#10243b;margin-bottom:18px}.round strong{font-size:23px;color:var(--gold)}
+.dashboard{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.team{background:#08182b;border:3px solid;border-radius:12px;padding:13px}.team h3{margin:0}.muted{color:var(--muted);font-size:11px}.money{font-size:23px;color:#86efac;font-weight:900;margin-top:10px}.spent{color:#fca5a5;font-size:12px}.progress{height:7px;background:#182c43;border-radius:9px;margin-top:6px}.fill{height:100%;background:var(--gold)}.squad{display:flex;flex-direction:column;gap:5px;margin-top:10px;max-height:145px;overflow:auto}.member{display:flex;justify-content:space-between;background:#06111f;padding:6px;border-radius:5px;font-size:11px}
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.stat{background:#08182b;border:1px solid var(--border);padding:12px;border-radius:9px}.stat span{display:block;color:var(--muted);font-size:10px;text-transform:uppercase}.stat strong{display:block;color:var(--gold);font-size:17px;margin-top:6px}
+.auction{display:grid;grid-template-columns:1fr 1fr;gap:18px}.wheelbox{text-align:center}.wheel{width:min(650px,100%);height:auto;border-radius:50%;border:6px solid #172b42;background:#020711}
+.bid{background:#08182b;border:1px solid var(--border);border-radius:12px;padding:16px}.bidtop{display:flex;justify-content:space-between}.current{text-align:center;border:2px solid var(--gold);border-radius:10px;padding:15px;margin:14px 0}.current .amount{font-size:38px;color:var(--gold);font-weight:900}.step,.custom{background:#10243b;border:1px solid #3a5874;padding:11px;border-radius:8px;margin-bottom:10px}.step{text-align:center}.step strong{display:block;color:var(--gold);font-size:19px}.customrow{display:flex;gap:7px}.bidbuttons{display:grid;grid-template-columns:1fr 1fr;gap:9px}.teamBid{min-height:78px;border:2px solid;border-radius:9px;background:#14283e;color:#fff;font-weight:900}.teamBid.high{box-shadow:0 0 0 3px var(--gold)}.status{display:block;font-size:10px;color:#cbd5e1;margin-top:4px}.sale{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.sale button{padding:13px;border:0;border-radius:8px;color:white;font-weight:900}
+table{width:100%;border-collapse:collapse;min-width:650px}th,td{padding:9px;border-bottom:1px solid var(--border);text-align:left}th{color:var(--gold);background:#10243b;font-size:11px}.sold{color:#86efac;font-weight:900}.unsold{color:#fca5a5;font-weight:900}.tablewrap{overflow:auto}
+.overlay{position:fixed;inset:0;background:#000c;display:none;align-items:center;justify-content:center;padding:14px;z-index:100}.overlay.show{display:flex}.modal{width:min(680px,96vw);max-height:94vh;overflow:auto;background:#0d1b2e;border:2px solid var(--gold);border-radius:15px;padding:20px}.modal h2{margin-top:0}.winner{text-align:center}.winner img{display:block;margin:0 auto 14px;max-width:100%;max-height:72vh;width:auto;height:auto;object-fit:contain;background:#000;border:5px solid var(--gold);border-radius:8px}.finalgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.finalteam{background:#06111f;padding:10px;border:1px solid var(--border);border-radius:8px}.hidden{display:none!important}
+
+/* =========================
+   ENHANCED COMPLETION MODALS
+========================= */
+
+#teamModal .modal,
+#finalModal .modal{
+    width:min(1100px,97vw);
+    max-height:94vh;
+    padding:0;
+    overflow:hidden;
+    border:1px solid rgba(250,204,21,.65);
+    background:
+        radial-gradient(circle at 50% -20%,rgba(250,204,21,.16),transparent 38%),
+        linear-gradient(145deg,#0e2238,#06111f 70%);
+    box-shadow:0 25px 90px rgba(0,0,0,.75),0 0 45px rgba(250,204,21,.12);
+}
+
+.completion-shell{
+    max-height:94vh;
+    overflow:auto;
+}
+
+.completion-hero{
+    position:relative;
+    text-align:center;
+    padding:28px 24px 22px;
+    background:
+        radial-gradient(circle at 50% 0%,rgba(250,204,21,.20),transparent 55%),
+        linear-gradient(180deg,#102943,#081727);
+    border-bottom:1px solid #34536f;
+}
+
+.completion-hero::before{
+    content:"🏆";
+    position:absolute;
+    left:22px;
+    top:16px;
+    font-size:42px;
+    filter:drop-shadow(0 0 12px rgba(250,204,21,.45));
+}
+
+.completion-hero::after{
+    content:"🏆";
+    position:absolute;
+    right:22px;
+    top:16px;
+    font-size:42px;
+    filter:drop-shadow(0 0 12px rgba(250,204,21,.45));
+}
+
+.completion-kicker{
+    color:#fde68a;
+    font-size:11px;
+    font-weight:900;
+    letter-spacing:3px;
+    text-transform:uppercase;
+}
+
+.completion-title{
+    margin:7px 0 4px;
+    color:#fff;
+    font-size:clamp(27px,4vw,43px);
+    font-weight:1000;
+    text-shadow:0 3px 18px rgba(0,0,0,.45);
+}
+
+.completion-title span{
+    color:#facc15;
+}
+
+.completion-subtitle{
+    margin:0;
+    color:#cbd5e1;
+    font-size:13px;
+}
+
+.completion-pills{
+    display:flex;
+    justify-content:center;
+    gap:8px;
+    flex-wrap:wrap;
+    margin-top:15px;
+}
+
+.completion-pill{
+    padding:7px 12px;
+    border-radius:999px;
+    background:#071525;
+    border:1px solid #3b5872;
+    color:#e2e8f0;
+    font-size:11px;
+    font-weight:900;
+}
+
+.completion-pill.gold{
+    color:#111827;
+    background:#facc15;
+    border-color:#fde68a;
+}
+
+.final-summary{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:9px;
+    padding:14px 18px 4px;
+}
+
+.final-stat{
+    text-align:center;
+    padding:11px 8px;
+    border:1px solid #2e4a65;
+    border-radius:10px;
+    background:rgba(7,21,37,.72);
+}
+
+.final-stat span{
+    display:block;
+    color:#94a3b8;
+    font-size:9px;
+    font-weight:900;
+    text-transform:uppercase;
+    letter-spacing:.6px;
+}
+
+.final-stat strong{
+    display:block;
+    color:#facc15;
+    font-size:16px;
+    margin-top:4px;
+}
+
+.final-teams-modern{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+    padding:14px 18px 18px;
+}
+
+.final-team-modern{
+    position:relative;
+    overflow:hidden;
+    border:2px solid;
+    border-radius:14px;
+    background:linear-gradient(145deg,rgba(16,36,59,.98),rgba(5,15,27,.98));
+    box-shadow:0 12px 30px rgba(0,0,0,.25);
+}
+
+.final-team-modern::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(125deg,rgba(255,255,255,.07),transparent 38%);
+    pointer-events:none;
+}
+
+.final-team-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    padding:13px 14px;
+    border-bottom:1px solid rgba(148,163,184,.2);
+}
+
+.final-team-name{
+    font-size:18px;
+    font-weight:1000;
+    margin:0;
+}
+
+.final-team-meta{
+    color:#94a3b8;
+    font-size:10px;
+    line-height:1.45;
+    text-align:right;
+}
+
+.squad-badge{
+    display:inline-block;
+    margin-top:5px;
+    padding:4px 8px;
+    border-radius:999px;
+    background:#16a34a;
+    color:#fff;
+    font-size:9px;
+    font-weight:1000;
+    letter-spacing:.6px;
+}
+
+.final-players{
+    padding:9px 12px 3px;
+}
+
+.final-player-row{
+    display:grid;
+    grid-template-columns:27px 1fr auto;
+    align-items:center;
+    gap:8px;
+    padding:7px 4px;
+    border-bottom:1px solid rgba(71,85,105,.35);
+    font-size:12px;
+}
+
+.final-player-row:last-child{
+    border-bottom:0;
+}
+
+.player-number{
+    width:24px;
+    height:24px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:50%;
+    background:#172b42;
+    color:#cbd5e1;
+    font-size:10px;
+    font-weight:900;
+}
+
+.final-player-row.captain-row .player-number{
+    background:#facc15;
+    color:#111827;
+}
+
+.final-player-name{
+    font-weight:800;
+}
+
+.final-player-name small{
+    display:block;
+    color:#facc15;
+    font-size:8px;
+    margin-top:2px;
+    text-transform:uppercase;
+}
+
+.final-player-price{
+    color:#86efac;
+    font-weight:1000;
+    white-space:nowrap;
+}
+
+.final-team-footer{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+    padding:10px 12px 12px;
+}
+
+.final-money{
+    background:#071525;
+    border:1px solid #263f58;
+    border-radius:8px;
+    padding:8px;
+}
+
+.final-money span{
+    display:block;
+    color:#94a3b8;
+    font-size:9px;
+    text-transform:uppercase;
+    font-weight:900;
+}
+
+.final-money strong{
+    display:block;
+    margin-top:3px;
+    font-size:14px;
+    color:#f8fafc;
+}
+
+.final-money.remaining strong{
+    color:#86efac;
+}
+
+.completion-footer{
+    text-align:center;
+    padding:16px 18px 20px;
+    border-top:1px solid #2d4964;
+    background:linear-gradient(180deg,#0b1d31,#071525);
+}
+
+.success-ribbon{
+    display:inline-block;
+    padding:9px 24px;
+    border-radius:999px;
+    border:1px solid #facc15;
+    background:linear-gradient(90deg,#7c4a03,#facc15,#7c4a03);
+    color:#111827;
+    font-weight:1000;
+    font-size:14px;
+    box-shadow:0 0 22px rgba(250,204,21,.16);
+}
+
+.success-note{
+    margin:8px 0 0;
+    color:#94a3b8;
+    font-size:11px;
+}
+
+.team-complete-hero{
+    text-align:center;
+    padding:28px 22px 20px;
+    background:
+        radial-gradient(circle at 50% 0%,rgba(250,204,21,.18),transparent 55%),
+        linear-gradient(180deg,#102943,#081727);
+    border-bottom:1px solid #34536f;
+}
+
+.team-complete-icon{
+    font-size:44px;
+    filter:drop-shadow(0 0 12px rgba(250,204,21,.35));
+}
+
+.team-complete-title{
+    margin:5px 0 2px;
+    color:#facc15;
+    font-size:30px;
+    font-weight:1000;
+}
+
+.team-complete-name{
+    margin:0;
+    color:#fff;
+    font-size:22px;
+    font-weight:1000;
+}
+
+.team-complete-details{
+    color:#94a3b8;
+    font-size:11px;
+    margin-top:6px;
+}
+
+.team-complete-metrics{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:9px;
+    padding:14px 18px 4px;
+}
+
+.team-metric{
+    text-align:center;
+    background:#071525;
+    border:1px solid #2e4a65;
+    border-radius:9px;
+    padding:10px 7px;
+}
+
+.team-metric span{
+    display:block;
+    color:#94a3b8;
+    font-size:9px;
+    font-weight:900;
+    text-transform:uppercase;
+}
+
+.team-metric strong{
+    display:block;
+    color:#facc15;
+    font-size:16px;
+    margin-top:4px;
+}
+
+.team-complete-list{
+    padding:12px 18px 16px;
+}
+
+.team-complete-player{
+    display:grid;
+    grid-template-columns:34px 1fr auto;
+    align-items:center;
+    gap:9px;
+    background:linear-gradient(90deg,#0a1b2d,#071525);
+    border:1px solid #263f58;
+    border-radius:9px;
+    padding:8px 10px;
+    margin-bottom:7px;
+}
+
+.team-complete-player:last-child{
+    margin-bottom:0;
+}
+
+.team-player-index{
+    width:28px;
+    height:28px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:50%;
+    background:#172b42;
+    color:#cbd5e1;
+    font-weight:1000;
+    font-size:11px;
+}
+
+.team-complete-player.captain .team-player-index{
+    background:#facc15;
+    color:#111827;
+}
+
+.team-player-main strong{
+    display:block;
+    font-size:12px;
+}
+
+.team-player-main small{
+    display:block;
+    color:#94a3b8;
+    font-size:9px;
+    margin-top:2px;
+}
+
+.team-player-price{
+    color:#86efac;
+    font-weight:1000;
+    font-size:13px;
+}
+
+.team-complete-footer{
+    display:flex;
+    justify-content:center;
+    padding:0 18px 20px;
+}
+
+.complete-continue{
+    min-width:230px;
+    padding:12px 22px;
+    border-radius:10px;
+    font-weight:1000;
+    background:linear-gradient(135deg,#facc15,#eab308);
+    color:#111827;
+    border:0;
+    box-shadow:0 8px 25px rgba(250,204,21,.16);
+}
+
+@media(max-width:700px){
+    .final-summary{grid-template-columns:1fr 1fr}
+    .final-teams-modern{grid-template-columns:1fr}
+    .team-complete-metrics{grid-template-columns:1fr 1fr}
+    .completion-hero::before,.completion-hero::after{display:none}
+}
+
+
+/* Final completion popup: use the full modal width.
+   The old .finalgrid two-column rule was making the whole completion
+   content occupy only half of the modal. */
+#finalModal .modal{
+    width:min(1280px,96vw);
+    max-width:1280px;
+}
+
+#finalModal .modal > h2,
+#finalModal .modal > p{
+    display:none;
+}
+
+#finalModal #finalgrid{
+    display:block;
+    width:100%;
+    margin:0;
+    padding:0;
+}
+
+#finalModal .completion-shell{
+    width:100%;
+    max-width:none;
+}
+
+#finalModal .final-teams-modern{
+    width:100%;
+}
+
+#finalModal .completion-hero{
+    padding-left:45px;
+    padding-right:45px;
+}
+
+@media(max-width:1100px){.grid4,.dashboard{grid-template-columns:1fr 1fr}.stats{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:800px){.auction,.grid3{grid-template-columns:1fr}.grid4,.dashboard{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.bidbuttons,.sale,.finalgrid{grid-template-columns:1fr}.stats{grid-template-columns:1fr}}
+
+
+/* =========================================================
+   CURRENT PLAYER BANNER — LIVE BIDDING
+   Prominently displays the selected player's name while bids
+   are being placed.
+========================================================= */
+.current-player {
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin: 12px 0;
+    padding: 14px 18px;
+    border: 2px solid #facc15;
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(250, 204, 21, 0.14), rgba(15, 23, 42, 0.95));
+    box-shadow: 0 0 18px rgba(250, 204, 21, 0.12);
+}
+
+.current-player span {
+    color: #facc15;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    white-space: nowrap;
+}
+
+.current-player strong {
+    color: #ffffff;
+    font-size: 24px;
+    font-weight: 900;
+    text-align: right;
+    word-break: break-word;
+}
+
+@media (max-width: 700px) {
+    .current-player {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .current-player strong {
+        font-size: 21px;
+        text-align: left;
+    }
+}
+
+
+/* =========================================================
+   SPL PHOTO GALLERY — AUTO ROTATING IMAGE PREVIEW
+   Add your gallery image filenames to PHOTO_GALLERY below.
+========================================================= */
+.gallery-section{
+    position:relative;
+    overflow:hidden;
+    padding:12px;
+    background:
+        radial-gradient(circle at 50% 0%,rgba(250,204,21,.10),transparent 45%),
+        linear-gradient(145deg,#0d1b2e,#06111f);
+}
+
+.gallery-frame{
+    position:relative;
+    width:100%;
+    height:clamp(220px,32vw,480px);
+    overflow:hidden;
+    border:1px solid #35526e;
+    border-radius:14px;
+    background:#020711;
+    box-shadow:0 18px 45px rgba(0,0,0,.35);
+}
+
+.gallery-slide{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    opacity:0;
+    transform:scale(1.02);
+    transition:opacity .8s ease,transform 5s ease;
+    background:#020711;
+}
+
+.gallery-slide.active{
+    opacity:1;
+    transform:scale(1.0);
+}
+
+.gallery-overlay{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    background:linear-gradient(180deg,rgba(0,0,0,.04) 45%,rgba(0,0,0,.72));
+}
+
+.gallery-caption{
+    position:absolute;
+    left:22px;
+    bottom:18px;
+    z-index:3;
+    max-width:min(700px,80%);
+    color:#fff;
+    text-shadow:0 2px 10px rgba(0,0,0,.8);
+}
+
+.gallery-caption strong{
+    display:block;
+    color:#facc15;
+    font-size:clamp(18px,2.2vw,30px);
+    font-weight:1000;
+    margin-bottom:4px;
+}
+
+.gallery-caption span{
+    font-size:13px;
+    color:#e2e8f0;
+}
+
+.gallery-arrow{
+    position:absolute;
+    top:50%;
+    z-index:4;
+    transform:translateY(-50%);
+    width:42px;
+    height:42px;
+    border:1px solid rgba(255,255,255,.35);
+    border-radius:50%;
+    background:rgba(2,7,17,.62);
+    color:#fff;
+    font-size:24px;
+    font-weight:900;
+    cursor:pointer;
+    backdrop-filter:blur(5px);
+    transition:.2s ease;
+}
+
+.gallery-arrow:hover{
+    background:#facc15;
+    color:#111827;
+    border-color:#facc15;
+}
+
+.gallery-prev{left:15px}
+.gallery-next{right:15px}
+
+.gallery-dots{
+    position:absolute;
+    left:50%;
+    bottom:16px;
+    z-index:5;
+    transform:translateX(-50%);
+    display:flex;
+    gap:7px;
+    padding:6px 10px;
+    border-radius:999px;
+    background:rgba(2,7,17,.55);
+    backdrop-filter:blur(5px);
+}
+
+.gallery-dot{
+    width:8px;
+    height:8px;
+    padding:0;
+    border:0;
+    border-radius:50%;
+    background:#94a3b8;
+    cursor:pointer;
+    transition:.2s ease;
+}
+
+.gallery-dot.active{
+    width:24px;
+    border-radius:999px;
+    background:#facc15;
+}
+
+.gallery-status{
+    text-align:center;
+    color:#64748b;
+    font-size:11px;
+    margin:8px 0 0;
+}
+
+@media(max-width:700px){
+    .gallery-frame{height:260px}
+    .gallery-arrow{width:36px;height:36px;font-size:20px}
+    .gallery-caption{left:15px;bottom:15px}
+    .gallery-caption span{font-size:11px}
+}
+
+
+
+    /* =========================================================
+       PHOTO GALLERY — DYNAMIC 16:9 RATIO
+       The gallery width follows the available page width.
+       Its height is always calculated from that width so the
+       gallery remains exactly 16:9 at 100%, 125%, 150%, 200%,
+       250% browser zoom, and on different screen sizes.
+    ========================================================== */
+
+    .gallery-frame {
+        width: 100%;
+        height: auto !important;
+        aspect-ratio: 16 / 9;
+        min-height: 0 !important;
+        max-height: none !important;
+        overflow: hidden;
+        position: relative;
+        box-sizing: border-box;
+    }
+
+    .gallery-slide {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        aspect-ratio: 16 / 9;
+        object-fit: cover;
+    }
+
+    /* Keep the gallery controls centered regardless of zoom level. */
+    .gallery-arrow {
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .gallery-prev {
+        left: clamp(10px, 1.5vw, 24px);
+    }
+
+    .gallery-next {
+        right: clamp(10px, 1.5vw, 24px);
+    }
+
+    .gallery-dots {
+        bottom: clamp(10px, 1.2vw, 18px);
+    }
+
+    /*
+       The caption scales with the viewport instead of using a fixed
+       height, so it remains proportional when the browser is zoomed.
+    */
+    .gallery-caption {
+        left: clamp(15px, 2vw, 32px);
+        bottom: clamp(15px, 2vw, 30px);
+    }
+
+    .gallery-caption strong {
+        font-size: clamp(20px, 2.4vw, 42px);
+    }
+
+    .gallery-caption span {
+        font-size: clamp(12px, 1vw, 18px);
+    }
+
+    /*
+       Remove the old fixed-height mobile rule. The aspect-ratio
+       controls the height on every screen size.
+    */
+    @media (max-width: 700px) {
+        .gallery-frame {
+            width: 100%;
+            height: auto !important;
+            aspect-ratio: 16 / 9;
+        }
+
+        .gallery-arrow {
+            width: 38px;
+            height: 38px;
+            font-size: 21px;
+        }
+    }
+
+    /*
+       Make the surrounding gallery section follow the gallery's
+       natural height. No fixed height is imposed on the section.
+    */
+    .gallery-section {
+        height: auto;
+        min-height: 0;
+    }
+
+/* Larger, clearer controls and labels for live auction use. */
+body{font-size:16px}
+label{font-size:14px}
+.muted{font-size:13px}
+.mini{font-size:13px;padding:8px}
+.status{font-size:12px}
+.teamBid{padding:12px 10px;min-height:96px;font-size:17px;line-height:1.25}
+.team-captain{display:block;margin-top:5px;color:#facc15;font-size:14px;font-weight:800}
+.teamBid .status{font-size:13px}
+@media(max-width:700px){.header{flex-wrap:wrap}.container{padding:12px}.section{padding:14px}.grid4,.dashboard{grid-template-columns:repeat(2,minmax(0,1fr))}.auction{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:480px){.grid4,.dashboard,.bidbuttons,.sale,.finalgrid,.stats{grid-template-columns:1fr}.brand h1{font-size:20px}.modal{padding:14px}}
+</style>
+</head>
+<body>
+<header class="header">
+<div class="brand"><img src="spl-logo.jpeg" class="spl-logo"><div><h1>SPL SEASON 5</h1><p>Cricket Player Auction</p></div></div>
+<div class="actions"><button class="btn dark" id="mute" onclick="toggleMute()">🔊 SOUND ON</button><button class="btn danger" onclick="resetAuction()">♻️ RESET AUCTION</button></div>
+</header>
+
+<!-- =========================================================
+     SPL PHOTO GALLERY
+     Put your gallery images in the SAME FOLDER as this HTML.
+
+     Example filenames:
+       spl-photo-1.jpg
+       spl-photo-2.jpg
+       spl-photo-3.jpg
+       spl-photo-4.jpg
+
+     Then add those filenames to PHOTO_GALLERY in JavaScript.
+========================================================= -->
+<section class="section gallery-section">
+    <div class="gallery-frame" id="galleryFrame">
+        <div id="gallerySlides"></div>
+        <div class="gallery-overlay"></div>
+
+        <div class="gallery-caption" id="galleryCaption">
+            <strong>SPL SEASONS MEMORY</strong>
+            <span>Effort • Teamwork • Champions</span>
+        </div>
+
+        <button class="gallery-arrow gallery-prev" id="galleryPrev" type="button" aria-label="Previous image">‹</button>
+        <button class="gallery-arrow gallery-next" id="galleryNext" type="button" aria-label="Next image">›</button>
+        <div class="gallery-dots" id="galleryDots"></div>
+    </div>
+    <p class="gallery-status" id="galleryStatus">SPL Season 5 Gallery</p>
+</section>
+
+<main class="container">
+<section class="section">
+<h2>🏏 TEAM SETUP</h2>
+<div class="grid3"><div><label>Total Players Per Team — Captain Included</label><select id="size"><option>3</option><option>4</option><option>5</option><option selected>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option></select></div></div>
+<div class="grid4" id="setups"></div>
+<div id="requirement"></div>
+<div class="actions" style="justify-content:center;margin-top:15px"><button class="btn gold" id="start" onclick="startAuction()">🚀 START AUCTION</button></div>
+</section>
+
+<section class="section">
+<h2>📁 PLAYER CARD FOLDER</h2>
+<div class="grid3">
+<div class="folder" style="grid-column:span 1"><b>Select Player Card Folder</b><p class="muted">Player name comes from the image filename.</p><input type="file" id="folder" webkitdirectory directory multiple accept="image/*"><div id="count" class="muted" style="margin-top:9px">No player cards loaded.</div></div>
+<div style="grid-column:span 2"><div id="requirement2"></div><div class="playerlist" id="players"></div></div>
+</div>
+</section>
+
+<div class="round"><span class="muted">CURRENT ROUND</span><br><strong id="round">AUCTION NOT STARTED</strong></div>
+
+<section class="section"><h2>📊 LIVE TEAM DASHBOARD</h2><div class="dashboard" id="dashboard"></div></section>
+
+<section class="section"><h2>📈 LIVE AUCTION STATS</h2><div class="stats">
+<div class="stat"><span>Highest Sale</span><strong id="highsale">₹0</strong><small id="highplayer"></small></div>
+<div class="stat"><span>Total Spent</span><strong id="spent">₹0</strong></div>
+<div class="stat"><span>Average Spend</span><strong id="avg">₹0</strong></div>
+<div class="stat"><span>Sold / Unsold</span><strong id="soldunsold">0 / 0</strong></div>
+<div class="stat"><span>Remaining Budget</span><strong id="remaining">₹0</strong></div>
+</div></section>
+
+<section class="section">
+<div class="auction">
+<div class="wheelbox"><canvas id="wheel" class="wheel" width="650" height="650"></canvas><button class="btn gold" id="spin" style="font-size:18px;margin-top:15px" onclick="spin()">🎡 SPIN WHEEL</button><p id="selected" class="muted">Spin the wheel to select a player.</p></div>
+<div class="bid">
+<div class="bidtop"><h2>💰 LIVE BIDDING</h2><span id="anum" class="muted"></span></div>
+
+<!-- =========================================================
+     CURRENT PLAYER NAME — ALWAYS VISIBLE DURING BIDDING
+     This keeps the player name in front of the captains so
+     nobody forgets which player is currently being auctioned.
+========================================================= -->
+<div class="current-player" id="bidplayer">
+    <span>🏏 NOW BIDDING</span>
+    <strong id="bidplayername">—</strong>
+</div>
+
+<div class="current"><div class="muted">CURRENT BID</div><div class="amount" id="bidamount">₹0</div><b id="leader">No bids yet</b></div>
+<div class="step"><span class="muted">NORMAL BID STEP</span><strong>₹5,00,000</strong><small>Every normal bid increases by ₹5 lakh.</small></div>
+<div class="custom"><b>⚡ CUSTOM BID AMOUNT</b><div class="customrow" style="margin-top:7px"><input id="custom" type="number" min="5" step="5" placeholder="Amount in ₹ lakh"><button class="btn gold" onclick="checkCustom()">CHECK</button></div><small class="muted">Only multiples of ₹5 lakh are allowed. Example: 20, 30, 50.</small><div id="custommsg"></div></div>
+<div class="bidbuttons" id="bidbuttons"></div>
+<button class="btn dark" id="undobid" onclick="undoBid()" disabled style="width:100%;margin-top:9px">↩️ UNDO LAST BID</button>
+<div class="sale"><button class="green" id="soldbtn" onclick="requestSold()" disabled>🔨 SOLD</button><button class="danger" id="unsoldbtn" onclick="requestUnsold()" disabled>❌ UNSOLD</button></div>
+</div>
+</div>
+</section>
+
+<section class="section">
+<div class="actions" style="justify-content:space-between;align-items:center"><h2 style="margin:0">📜 AUCTION HISTORY</h2><div class="actions"><button class="btn dark" id="undotx" onclick="requestUndoTx()" disabled>↩️ UNDO LAST TRANSACTION</button><button class="btn green" onclick="exportExcel()">📊 EXPORT EXCEL</button></div></div>
+<div class="tablewrap"><table><thead><tr><th>Auction</th><th>Player</th><th>Round</th><th>Result</th><th>Team</th><th>Price</th></tr></thead><tbody id="history"></tbody></table></div>
+</section>
+</main>
+
+<div class="overlay" id="playerModal"><div class="modal winner"><img id="winnerimg"><h2 id="winnername"></h2><p class="muted">Player selected from the wheel.</p><button class="btn gold" onclick="startBidding()">🔨 START BIDDING</button></div></div>
+
+<div class="overlay" id="confirmModal"><div class="modal"><h2 id="ctitle"></h2><div id="cbody"></div><div class="actions" style="justify-content:flex-end;margin-top:18px"><button class="btn dark" onclick="closeConfirm()">CANCEL</button><button class="btn gold" id="confirmbtn">CONFIRM</button></div></div></div>
+
+<div class="overlay" id="teamModal"><div class="modal"><h2>🏆 TEAM COMPLETE!</h2><h2 id="teamcomplete"></h2><div id="teamsquad"></div><div class="actions" style="justify-content:flex-end;margin-top:15px"><button class="btn gold" onclick="closeTeam()">CONTINUE AUCTION</button></div></div></div>
+
+<div class="overlay" id="finalModal"><div class="modal"><h2 id="finaltitle"></h2><p id="finalmsg"></p><div class="finalgrid" id="finalgrid"></div><div class="actions" style="justify-content:flex-end;margin-top:15px"><button class="btn green" onclick="exportExcel()">📊 EXPORT EXCEL</button><button class="btn gold" onclick="closeFinal()">VIEW RESULTS</button></div></div></div>
+
+<div class="overlay" id="resumeModal"><div class="modal" style="text-align:center"><h2>🔄 PREVIOUS AUCTION FOUND</h2><p id="resumetext"></p><div class="actions" style="justify-content:center"><button class="btn danger" onclick="fresh()">START FRESH</button><button class="btn gold" onclick="resume()">RESUME AUCTION</button></div></div></div>
+
+<script>
+const KEY="splAuctionState",MKEY="splAuctionMuted",BUDGET=10000000,BID=500000,STEP=500000;
+let teams=[],players=[],unsold=[],history=[],round=1,auctionNo=1,size=6,started=false,current=null,currentBid=0,leader=null,bidHistory=[],lastTx=null,rotation=0,spinning=false,pending=null,timer=null,muted=localStorage.getItem(MKEY)==="true",initialPlayerCount=0;
+const colors=[["#dc2626","Red"],["#2563eb","Blue"],["#eab308","Yellow"],["#111827","Black"]];
+const $=id=>document.getElementById(id), money=n=>"₹"+Number(n||0).toLocaleString("en-IN"), clone=o=>JSON.parse(JSON.stringify(o)), esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
+
+function init(){
+ let s="";
+ for(let i=0;i<4;i++)s+=`<div class="setup"><h3>TEAM ${i+1}</h3><label>Team Name</label><input id="tn${i}" placeholder="Team name"><label>Owner Name</label><input id="on${i}" placeholder="Owner name"><label>Captain Name</label><input id="cn${i}" placeholder="Captain name"><label>Team Color</label><div class="colors">${colors.map((c,j)=>`<button class="color ${["redc","bluec","yellowc","blackc"][j]} ${j===i?"sel":""}" data-i="${i}" data-c="${c[0]}" data-n="${c[1]}" onclick="pickColor(this)"></button>`).join("")}</div></div>`;
+ $("setups").innerHTML=s;teams=colors.map(c=>({name:"",owner:"",captain:"",color:c[0],colorName:c[1],budget:BUDGET,spent:0,squad:[]}));
+ $("folder").addEventListener("change",loadFolder);$("size").addEventListener("change",()=>{size=+$("size").value;requirement();save()});updateMute();draw();render();
+ let raw=localStorage.getItem(KEY);if(raw){try{let s=JSON.parse(raw);if(s.started){$("resumetext").textContent=`A previous auction session was found (Auction ${s.round}, ${(s.history||[]).filter(x=>x.result==="SOLD").length} players sold). Resume it or start fresh?`;$("resumeModal").classList.add("show")}}catch(e){}}
+}
+function pickColor(el){if(started)return;let i=+el.dataset.i;document.querySelectorAll(`.color[data-i="${i}"]`).forEach(x=>x.classList.remove("sel"));el.classList.add("sel");teams[i].color=el.dataset.c;teams[i].colorName=el.dataset.n}
+function startAuction(){
+ if(started)return;size=+$("size").value;let used=[];
+ for(let i=0;i<4;i++){let name=$("tn"+i).value.trim(),owner=$("on"+i).value.trim(),capt=$("cn"+i).value.trim();if(!name||!owner||!capt){alert(`Complete Team ${i+1} details.`);return}if(used.includes(teams[i].color)){alert("Each team must have a different color.");return}used.push(teams[i].color);Object.assign(teams[i],{name,owner,captain:capt,budget:BUDGET,spent:0,squad:[{name:capt,price:0,role:"Captain",type:"Captain",auctionRound:0}]})}
+ started=true;disableSetup();save();render();$("spin").disabled=players.length===0;alert("Auction started. Normal bids increase by ₹5 lakh. Use Custom Bid for a direct multiple-of-₹5-lakh jump.")
+}
+function disableSetup(){document.querySelectorAll("#setups input,#size").forEach(x=>x.disabled=true);$("start").disabled=true}
+async function loadFolder(e){
+ if(started&&history.length){alert("The player folder cannot be changed after a transaction has been processed.");e.target.value="";return}
+ if(current){alert("Finish the current player first.");e.target.value="";return}
+ let files=[...e.target.files].filter(f=>f.type.startsWith("image/"));if(!files.length){alert("No image files found.");return}
+ players=[];unsold=[];$("count").textContent="Loading...";
+ let seen=new Set();
+ for(let f of files){let n=f.name.replace(/\.[^/.]+$/,"").replace(/[_-]+/g," ").replace(/\s+/g," ").trim();if(!n||seen.has(n.toLowerCase()))continue;seen.add(n.toLowerCase());try{players.push({name:n,image:await optimize(f),role:"",type:"Player"})}catch(x){}}
+ initialPlayerCount=players.length;render();save()
+}
+function optimize(file){return new Promise((res,rej)=>{let r=new FileReader;r.onload=e=>{let im=new Image;im.onload=()=>{let m=600,w=im.naturalWidth,h=im.naturalHeight,s=Math.min(1,m/Math.max(w,h));let c=document.createElement("canvas");c.width=Math.round(w*s);c.height=Math.round(h*s);c.getContext("2d").drawImage(im,0,0,c.width,c.height);res(c.toDataURL("image/jpeg",.85))};im.onerror=rej;im.src=e.target.result};r.onerror=rej;r.readAsDataURL(file)})}
+function requirement(){
+ let need=4*(size-1);
+ let loaded=initialPlayerCount||players.length;
+ let ok=loaded>=need;
+ let msg=ok
+  ? `✅ ${loaded}/${need} auction players loaded. Enough players are available.`
+  : `⚠️ ${loaded}/${need} auction players loaded. You may continue, but there may not be enough players to fill all squads.`;
+ ["requirement","requirement2"].forEach(id=>$(id).innerHTML=`<div class="notice ${ok?"ok":"warn"}">${msg}</div>`);
+}
+function render(){
+ // ------------------------------------------------------------
+ // Refresh the player pool and current auction status.
+ // ------------------------------------------------------------
+ $("count").textContent=initialPlayerCount?`${initialPlayerCount} player cards loaded • ${players.length} currently available on the wheel.`:"No player cards loaded.";
+ $("players").innerHTML=players.length?players.map(p=>`<div class="mini"><img src="${p.image}"><div>${esc(p.name)}</div></div>`).join(""):`<div class="muted" style="padding:20px">No players available.</div>`;
+ requirement();
+ $("round").textContent=started?`AUCTION ${round}`:"AUCTION NOT STARTED";
+ $("anum").textContent=started?`Auction ${auctionNo}`:"";
+
+ // ------------------------------------------------------------
+ // Refresh all live dashboard sections.
+ // ------------------------------------------------------------
+ renderTeams();
+ stats();
+ historyRender();
+ bidRender();
+
+ // ------------------------------------------------------------
+ // IMPORTANT: allFull takes priority over players remaining.
+ // Extra player cards must never allow the auction to get stuck.
+ // ------------------------------------------------------------
+ let allFull=teams.every(t=>t.squad.length>=size);
+ $("spin").disabled=!started||spinning||!!current||players.length===0||allFull;
+
+ draw();
+}
+function renderTeams(){
+ $("dashboard").innerHTML=teams.map(t=>{let pct=Math.min(100,t.squad.length/size*100);return `<div class="team" style="border-color:${t.color}"><h3>${esc(t.name||"TEAM")}</h3><div class="muted">Owner: ${esc(t.owner)}<br>Captain: ${esc(t.captain)}</div><div class="money">${money(t.budget)}</div><div class="spent">Spent: ${money(t.spent)}</div><div style="margin-top:8px;font-size:12px">Squad: ${t.squad.length}/${size}<div class="progress"><div class="fill" style="width:${pct}%"></div></div></div><div class="muted" style="margin-top:6px">Slots remaining: ${Math.max(size-t.squad.length,0)}</div><div class="squad">${t.squad.map(p=>`<div class="member"><span>${esc(p.name)}</span><b>${money(p.price)}</b></div>`).join("")}</div></div>`}).join("")
+}
+function stats(){
+ let sold=history.filter(x=>x.result==="SOLD"),hi=sold.reduce((a,b)=>!a||b.price>a.price?b:a,null),sp=teams.reduce((a,t)=>a+t.spent,0);
+ $("highsale").textContent=hi?money(hi.price):"₹0";$("highplayer").textContent=hi?`${hi.player} — ${hi.team}`:"";$("spent").textContent=money(sp);$("avg").textContent=money(sold.length?Math.round(sp/sold.length):0);$("soldunsold").textContent=`${sold.length} / ${history.length-sold.length}`;$("remaining").textContent=money(teams.reduce((a,t)=>a+t.budget,0));$("undotx").disabled=!lastTx||!history.length||!!current
+}
+function historyRender(){$("history").innerHTML=history.length?history.slice().reverse().map(x=>`<tr><td>${x.auctionNumber}</td><td>${esc(x.player)}</td><td>Auction ${x.round}</td><td class="${x.result==="SOLD"?"sold":"unsold"}">${x.result}</td><td>${esc(x.team)}</td><td>${x.result==="SOLD"?money(x.price):"-"}</td></tr>`).join(""):`<tr><td colspan="6" style="text-align:center;color:#94a3b8">No auction transactions yet.</td></tr>`}
+function maxBid(t){let remain=size-t.squad.length-1,reserve=STEP*Math.max(remain,0);return Math.max(0,Math.floor((t.budget-reserve)/STEP)*STEP)}
+function nextBid(){let v=$("custom").value.trim();if(v!=="")return +v*100000;return leader===null?BID:currentBid+STEP}
+function validCustom(){let raw=$("custom").value.trim();if(!raw)return true;let v=+raw;if(!Number.isFinite(v)||v<=0||v%5!==0||v*100000<=currentBid){$("custommsg").innerHTML='<span style="color:#fca5a5">❌ Enter a multiple of ₹5 lakh higher than the current bid.</span>';return false}$("custommsg").innerHTML='<span style="color:#86efac">✅ Valid custom bid. Click a team button.</span>';return true}
+function checkCustom(){validCustom();bidRender()}
+function bidRender(){
+ // ------------------------------------------------------------
+ // Keep the current player's name visible throughout bidding.
+ // ------------------------------------------------------------
+ const playerBanner=$("bidplayer");
+ const playerName=$("bidplayername");
+
+ if(current){
+  playerBanner.style.display="flex";
+  playerName.textContent=current.name;
+ }else{
+  playerBanner.style.display="none";
+  playerName.textContent="—";
+ }
+
+ let n=current?nextBid():null;$("bidamount").textContent=money(currentBid);$("leader").textContent=leader===null?"No bids yet":`Highest Bidder: ${teams[leader].name}`;$("soldbtn").disabled=!current||leader===null;$("unsoldbtn").disabled=!current;
+ $("bidbuttons").innerHTML=teams.map((t,i)=>{let full=t.squad.length>=size,high=leader===i,cap=n!==null?n>maxBid(t):true,aff=n!==null&&n<=t.budget;let status=full?"SQUAD FULL":high?"HIGHEST BIDDER":n===null?"INVALID CUSTOM BID":cap?"RESERVE LIMIT REACHED":!aff?"INSUFFICIENT BUDGET":`BID ${money(n)}`;return `<button class="teamBid ${high?"high":""}" style="border-color:${t.color}" ${!current||full||high||cap||!aff?"disabled":""} onclick="placeBid(${i})"><b>${esc(t.name||"TEAM "+(i+1))}</b><span class="team-captain">Captain: ${esc(t.captain||"Not set")}</span><span class="status">${n?money(n):"INVALID"}</span><span class="status">${status}</span></button>`}).join("");
+ $("undobid").disabled=!bidHistory.length
+}
+function placeBid(i){
+ if(!current)return;let t=teams[i];if(leader===i||t.squad.length>=size)return;if($("custom").value.trim()&&!validCustom())return;let n=nextBid();if(!n||n<=currentBid||n%STEP!==0){alert("Bid must be a higher multiple of ₹5 lakh.");return}if(n>maxBid(t)){alert(`${t.name} cannot bid ${money(n)} because of the ₹5 lakh reserve required for remaining slots.`);return}bidHistory.push({currentBid,leader});currentBid=n;leader=i;$("custom").value="";$("custommsg").innerHTML="";save();render()
+}
+function undoBid(){if(!bidHistory.length)return;let p=bidHistory.pop();currentBid=p.currentBid;leader=p.leader;$("custom").value="";save();render()}
+function spin(){
+ // ------------------------------------------------------------
+ // Start the wheel only when the auction is active.
+ // ------------------------------------------------------------
+ if(!started){alert("Start the auction first.");return}
+ if(spinning||current)return;
+
+ // ------------------------------------------------------------
+ // IMPORTANT: if every team is already full, the auction is over.
+ // This check must happen before checking remaining wheel players.
+ // ------------------------------------------------------------
+ if(teams.every(t=>t.squad.length>=size)){
+  showFinal(true);
+  return;
+ }
+
+ // ------------------------------------------------------------
+ // If the wheel is empty, move to the next round/final state.
+ // ------------------------------------------------------------
+ if(players.length===0){transition();return}
+
+ // ------------------------------------------------------------
+ // Spin the wheel. One player is removed only after selection.
+ // ------------------------------------------------------------
+ spinning=true;$("spin").disabled=true;let start=rotation,finish=start+Math.PI*2*(6+Math.random()*4),st=performance.now(),dur=4000;
+ function a(now){let p=Math.min((now-st)/dur,1),e=1-Math.pow(1-p,4);rotation=start+(finish-start)*e;draw();if(p<1)requestAnimationFrame(a);else{spinning=false;selectWinner()}}requestAnimationFrame(a)
+}
+function selectWinner(){
+ if(!players.length)return;
+ let slice=Math.PI*2/players.length,
+ n=((Math.PI*1.5-rotation)%(Math.PI*2)+Math.PI*2)%(Math.PI*2),
+ idx=Math.floor(n/slice);
+ current=players.splice(idx,1)[0];
+ currentBid=0;
+ leader=null;
+ bidHistory=[];
+ $("spin").disabled=true;
+ $("selected").textContent=`Selected Player: ${current.name}`;
+ $("winnerimg").src=current.image;
+ $("winnername").textContent=current.name;
+ $("custom").value="";
+ $("custommsg").innerHTML="";
+ $("playerModal").classList.add("show");
+ save();
+ render()
+}
+function startBidding(){$("playerModal").classList.remove("show");$("unsoldbtn").disabled=false;render()}
+function requestSold(){
+ if(!current||leader===null)return;let t=teams[leader];$("ctitle").textContent="🔨 CONFIRM SOLD";$("cbody").innerHTML=`<p>Sell <b>${esc(current.name)}</b> to <b>${esc(t.name)}</b>?</p><div class="notice ok">Final Bid: <b>${money(currentBid)}</b><br>Remaining Budget: <b>${money(t.budget-currentBid)}</b></div>`;$("confirmbtn").textContent="CONFIRM SOLD";pending=commitSold;$("confirmModal").classList.add("show")
+}
+function commitSold(){
+ let p=current,ti=leader,t=teams[ti],price=currentBid;lastTx={type:"SOLD",player:clone(p),teamIndex:ti,price,roundBefore:round,auctionNumberBefore:auctionNo};sound();t.budget-=price;t.spent+=price;t.squad.push({...p,price,auctionRound:round});history.push({auctionNumber:auctionNo,player:p.name,round,result:"SOLD",team:t.name,price});finish();save();render();closeConfirm();if(t.squad.length>=size)setTimeout(()=>showTeam(ti),200);transition()
+}
+function requestUnsold(){
+ if(!current)return;let active=leader!==null;$("ctitle").textContent="❌ CONFIRM UNSOLD";$("cbody").innerHTML=`<p>Mark <b>${esc(current.name)}</b> as UNSOLD?</p>${active?`<div class="notice warn">⚠️ Active bid of ${money(currentBid)} from <b>${esc(teams[leader].name)}</b> will be cancelled. This cannot be undone by the bid undo button.</div>`:`<div class="notice warn">${round===1?"This player will return in Auction 2.":"This player will be final UNSOLD."}</div>`}`;$("confirmbtn").textContent=active?"YES, CANCEL BID & MARK UNSOLD":"CONFIRM UNSOLD";pending=commitUnsold;$("confirmModal").classList.add("show")
+}
+function commitUnsold(){
+ let p=current;lastTx={type:"UNSOLD",player:clone(p),roundBefore:round,auctionNumberBefore:auctionNo};if(round===1)unsold.push(clone(p));history.push({auctionNumber:auctionNo,player:p.name,round,result:"UNSOLD",team:"-",price:0});finish();save();render();closeConfirm();transition()
+}
+function finish(){
+ current=null;
+ currentBid=0;
+ leader=null;
+ bidHistory=[];
+ $("selected").textContent="Spin the wheel to select a player.";
+ $("custom").value="";
+ $("custommsg").innerHTML="";
+ $("spin").disabled=players.length===0;
+}
+function transition(){
+ // ------------------------------------------------------------
+ // FIRST: if every team is full, the auction is complete even if
+ // extra player cards are still waiting on the wheel.
+ // ------------------------------------------------------------
+ if(teams.every(t=>t.squad.length>=size)){
+  showFinal(true);
+  return;
+ }
+
+ // ------------------------------------------------------------
+ // Do not transition while a player is still being processed.
+ // ------------------------------------------------------------
+ if(current)return;
+
+ // ------------------------------------------------------------
+ // Remaining players mean the current auction round can continue.
+ // ------------------------------------------------------------
+ if(players.length)return;
+
+ // ------------------------------------------------------------
+ // Auction 1 complete: return Auction 1 unsold players for Auction 2.
+ // ------------------------------------------------------------
+ if(round===1){
+  if(unsold.length){
+   if(timer)return;
+   timer=setTimeout(()=>{
+    timer=null;
+    round=2;
+    auctionNo=2;
+    players=unsold.map(clone);
+    unsold=[];
+    save();
+    render();
+    alert("AUCTION 1 COMPLETE! Unsold players have returned for AUCTION 2.");
+   },300);
+  }else{
+   round=2;
+   auctionNo=2;
+   save();
+   render();
+  }
+  return;
+ }
+
+ // ------------------------------------------------------------
+ // Auction 2 complete. Show the appropriate final result.
+ // ------------------------------------------------------------
+ showFinal(teams.every(t=>t.squad.length>=size));
+}
+function requestUndoTx(){
+ if(!lastTx||!history.length||current)return;let h=history[history.length-1];$("ctitle").textContent="↩️ UNDO LAST TRANSACTION";$("cbody").innerHTML=`<p>Undo the last confirmed transaction for <b>${esc(h.player)}</b>?</p><div class="notice warn">The player will be restored to the wheel and the transaction reversed.</div>`;$("confirmbtn").textContent="YES, UNDO TRANSACTION";pending=commitUndo;$("confirmModal").classList.add("show")
+}
+function commitUndo(){
+ if(timer){clearTimeout(timer);timer=null}let s=lastTx;if(s.type==="SOLD"){let t=teams[s.teamIndex];t.budget+=s.price;t.spent-=s.price;let k=t.squad.findIndex(p=>p.name===s.player.name&&p.price===s.price);if(k>=0)t.squad.splice(k,1)}else if(s.roundBefore===1){let k=unsold.findIndex(p=>p.name===s.player.name);if(k>=0)unsold.splice(k,1)}history.pop();round=s.roundBefore;auctionNo=s.auctionNumberBefore;players.push(clone(s.player));lastTx=null;finish();save();render();closeConfirm();alert(`Last transaction for "${s.player.name}" has been undone.`)
+}
+function showTeam(i){
+ let t=teams[i];
+ $("teamcomplete").textContent=t.name;
+ $("teamsquad").innerHTML=`
+   <div class="completion-shell">
+     <div class="team-complete-hero" style="border-top:4px solid ${t.color}">
+       <div class="team-complete-icon">🏆</div>
+       <div class="team-complete-title">TEAM COMPLETE!</div>
+       <div class="team-complete-name">${esc(t.name)}</div>
+       <div class="team-complete-details">
+         Owner: <b>${esc(t.owner)}</b> &nbsp;•&nbsp;
+         Captain: <b>${esc(t.captain)}</b>
+       </div>
+     </div>
+     <div class="team-complete-metrics">
+       <div class="team-metric"><span>Squad</span><strong>${t.squad.length}/${size}</strong></div>
+       <div class="team-metric"><span>Total Spent</span><strong>${money(t.spent)}</strong></div>
+       <div class="team-metric"><span>Remaining</span><strong>${money(t.budget)}</strong></div>
+     </div>
+     <div class="team-complete-list">
+       ${t.squad.map((p,n)=>`
+         <div class="team-complete-player ${p.price===0?"captain":""}">
+           <div class="team-player-index">${n+1}</div>
+           <div class="team-player-main">
+             <strong>${esc(p.name)}</strong>
+             <small>${p.price===0?"CAPTAIN • FREE PLAYER":"AUCTION PLAYER"}</small>
+           </div>
+           <div class="team-player-price">${money(p.price)}</div>
+         </div>
+       `).join("")}
+     </div>
+     <div class="team-complete-footer">
+       <button class="complete-continue" onclick="closeTeam()">🏏 CONTINUE AUCTION</button>
+     </div>
+   </div>`;
+ $("teamModal").classList.add("show");
+}
+function closeTeam(){$("teamModal").classList.remove("show");if(!players.length&&!unsold.length)showFinal(teams.every(t=>t.squad.length>=size))}
+function showFinal(full){
+ let soldCount=history.filter(x=>x.result==="SOLD").length;
+ let unsoldCount=history.filter(x=>x.result==="UNSOLD").length;
+ let totalSpent=teams.reduce((a,t)=>a+t.spent,0);
+ let totalPlayers=teams.reduce((a,t)=>a+t.squad.length,0);
+
+ $("finaltitle").textContent=full?"🏆 ALL TEAMS COMPLETED!":"🏁 AUCTION FINISHED";
+ $("finalmsg").textContent=full?"All four teams have successfully completed their squads.":"The available auction players have been exhausted.";
+
+ $("finalgrid").innerHTML=`
+   <div class="completion-shell">
+     <div class="completion-hero">
+       <div class="completion-kicker">SPL SEASON 5 • AUCTION RESULTS</div>
+       <div class="completion-title">${full?"AUCTION <span>COMPLETED!</span>":"AUCTION <span>FINISHED</span>"}</div>
+       <p class="completion-subtitle">${full?"Every team has built its squad. The auction is officially complete!":"The player pool has been exhausted. Review the final squad results below."}</p>
+       <div class="completion-pills">
+         <span class="completion-pill gold">🏆 ${full?"ALL TEAMS FULL":"AUCTION CLOSED"}</span>
+         <span class="completion-pill">🏏 ${teams.length} TEAMS</span>
+         <span class="completion-pill">👥 ${totalPlayers} SQUAD PLAYERS</span>
+       </div>
+     </div>
+
+     <div class="final-summary">
+       <div class="final-stat"><span>Players Sold</span><strong>${soldCount}</strong></div>
+       <div class="final-stat"><span>Players Unsold</span><strong>${unsoldCount}</strong></div>
+       <div class="final-stat"><span>Total Spent</span><strong>${money(totalSpent)}</strong></div>
+       <div class="final-stat"><span>Budget Remaining</span><strong>${money(teams.reduce((a,t)=>a+t.budget,0))}</strong></div>
+     </div>
+
+     <div class="final-teams-modern">
+       ${teams.map(t=>`
+         <div class="final-team-modern" style="border-color:${t.color}">
+           <div class="final-team-head">
+             <div>
+               <h3 class="final-team-name">${esc(t.name)}</h3>
+               <span class="squad-badge">${t.squad.length>=size?"FULL SQUAD":"INCOMPLETE"}</span>
+             </div>
+             <div class="final-team-meta">
+               Owner: <b>${esc(t.owner)}</b><br>
+               Captain: <b>${esc(t.captain)}</b>
+             </div>
+           </div>
+
+           <div class="final-players">
+             ${t.squad.map((p,n)=>`
+               <div class="final-player-row ${p.price===0?"captain-row":""}">
+                 <div class="player-number">${n+1}</div>
+                 <div class="final-player-name">
+                   ${esc(p.name)}
+                   ${p.price===0?'<small>CAPTAIN • FREE</small>':''}
+                 </div>
+                 <div class="final-player-price">${money(p.price)}</div>
+               </div>
+             `).join("")}
+           </div>
+
+           <div class="final-team-footer">
+             <div class="final-money">
+               <span>Total Spent</span>
+               <strong>${money(t.spent)}</strong>
+             </div>
+             <div class="final-money remaining">
+               <span>Remaining Budget</span>
+               <strong>${money(t.budget)}</strong>
+             </div>
+           </div>
+         </div>
+       `).join("")}
+     </div>
+
+     <div class="completion-footer">
+       <div class="success-ribbon">${full?"🏆 AUCTION SUCCESSFULLY COMPLETED!":"🏏 AUCTION RESULTS READY!"}</div>
+       <p class="success-note">${full?"4 teams • Complete squads • SPL Season 5":"All available players have been processed."}</p>
+     </div>
+   </div>`;
+ $("finalModal").classList.add("show");
+}
+function closeFinal(){$("finalModal").classList.remove("show")}
+function closeConfirm(){$("confirmModal").classList.remove("show");pending=null}
+$("confirmbtn").onclick=()=>{if(pending){let f=pending;pending=null;f()}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify({teams,players,unsold,history,round,auctionNo,started,size,current,currentBid,leader,bidHistory,lastTx,rotation,initialPlayerCount}))}catch(e){console.warn("Save failed",e)}}
+function resume(){
+ // ------------------------------------------------------------
+ // Read the saved auction session.
+ // ------------------------------------------------------------
+ let s=JSON.parse(localStorage.getItem(KEY));
+
+ // ------------------------------------------------------------
+ // Restore the ORIGINAL player count separately from the players
+ // currently remaining on the wheel.
+ // ------------------------------------------------------------
+ initialPlayerCount=s.initialPlayerCount||((s.players||[]).length+(s.unsold||[]).length+(s.current?1:0)+(s.history||[]).length);
+
+ // ------------------------------------------------------------
+ // IMPORTANT: assign directly to the existing let variables.
+ // Object.assign(window, ...) does NOT restore top-level let state.
+ // ------------------------------------------------------------
+ teams=s.teams||[];
+ players=s.players||[];
+ unsold=s.unsold||[];
+ history=s.history||[];
+ round=s.round||1;
+ auctionNo=s.auctionNo||1;
+ started=!!s.started;
+ size=s.size||6;
+ current=s.current||null;
+ currentBid=s.currentBid||0;
+ leader=s.leader??null;
+ bidHistory=s.bidHistory||[];
+ lastTx=s.lastTx||null;
+ rotation=s.rotation||0;
+
+ // ------------------------------------------------------------
+ // Restore team setup fields and selected colors.
+ // ------------------------------------------------------------
+ $("size").value=size;
+
+ teams.forEach((t,i)=>{
+  $("tn"+i).value=t.name;
+  $("on"+i).value=t.owner;
+  $("cn"+i).value=t.captain;
+
+  document
+   .querySelectorAll(`.color[data-i="${i}"]`)
+   .forEach(x=>x.classList.toggle("sel",x.dataset.c===t.color));
+ });
+
+ // ------------------------------------------------------------
+ // Lock setup controls and redraw the restored auction.
+ // ------------------------------------------------------------
+ disableSetup();
+ $("resumeModal").classList.remove("show");
+ render();
+}
+function fresh(){localStorage.removeItem(KEY);location.reload()}
+function resetAuction(){if(confirm("Reset the entire SPL auction and delete saved progress?")){localStorage.removeItem(KEY);location.reload()}}
+function toggleMute(){muted=!muted;localStorage.setItem(MKEY,muted);updateMute()}
+function updateMute(){$("mute").textContent=muted?"🔇 SOUND OFF":"🔊 SOUND ON"}
+function sound(){if(muted)return;try{let A=AudioContext||webkitAudioContext,a=new A,o=a.createOscillator,g=a.createGain;o.type="square";o.frequency.setValueAtTime(150,a.currentTime);o.frequency.exponentialRampToValueAtTime(70,a.currentTime+.35);g.gain.setValueAtTime(.0001,a.currentTime);g.gain.exponentialRampToValueAtTime(.3,a.currentTime+.02);g.gain.exponentialRampToValueAtTime(.0001,a.currentTime+.4);o.connect(g);g.connect(a.destination);o.start();o.stop(a.currentTime+.4)}catch(e){}}
+function draw(){
+ let c=$("wheel"),x=c.getContext("2d"),S=c.width,C=S/2,R=S*.43;x.clearRect(0,0,S,S);x.fillStyle="#020711";x.fillRect(0,0,S,S);if(!players.length){x.fillStyle="#94a3b8";x.font="bold 25px Arial";x.textAlign="center";x.fillText("PLAYER WHEEL",C,C);x.font="15px Arial";x.fillText("No players available",C,C+28);pointer(x,C);return}let sl=Math.PI*2/players.length,cs=["#14532d","#1e3a8a","#713f12","#4c1d95","#0f766e","#7f1d1d"];players.forEach((p,i)=>{let a=rotation+i*sl,b=a+sl;x.beginPath();x.moveTo(C,C);x.arc(C,C,R,a,b);x.closePath();x.fillStyle=cs[i%cs.length];x.fill();x.strokeStyle="#facc15";x.stroke();let m=a+sl/2,tx=C+Math.cos(m)*R*.67,ty=C+Math.sin(m)*R*.67;x.save();x.translate(tx,ty);x.rotate(m+Math.PI/2);x.fillStyle="#fff";x.font=`bold ${Math.max(10,Math.min(18,270/players.length))}px Arial`;x.textAlign="center";let n=p.name.length>18?p.name.slice(0,18)+"…":p.name;x.fillText(n,0,0);x.restore()});x.beginPath();x.arc(C,C,60,0,Math.PI*2);x.fillStyle="#071525";x.fill();x.strokeStyle="#facc15";x.lineWidth=5;x.stroke();x.fillStyle="#facc15";x.font="bold 20px Arial";x.textAlign="center";x.fillText("SPL",C,C+7);pointer(x,C)}
+function pointer(x,C){x.beginPath();x.moveTo(C-22,18);x.lineTo(C+22,18);x.lineTo(C,65);x.closePath();x.fillStyle="#ef4444";x.fill();x.strokeStyle="#fff";x.stroke()}
+function exportExcel(){
+ if(typeof XLSX==="undefined"){alert("Excel library is unavailable.");return}let wb=XLSX.utils.book_new();let summary=teams.map(t=>({Team:t.name,Owner:t.owner,Captain:t.captain,"Team Color":t.colorName,"Total Players Allowed":size,"Total Players":t.squad.length,"Players Bought":t.squad.filter(p=>p.price>0).length,"Initial Budget":BUDGET,"Total Spent":t.spent,"Remaining Budget":t.budget,"Slots Remaining":Math.max(size-t.squad.length,0),Status:t.squad.length>=size?"FULL":"INCOMPLETE"}));XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(summary),"Team Summary");let details=[];teams.forEach(t=>t.squad.forEach(p=>details.push({Team:t.name,Owner:t.owner,Captain:t.captain,"Team Color":t.colorName,Player:p.name,Role:p.role||"",Type:p.type||"","Auction Round":p.auctionRound||0,Price:p.price})));XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(details),"Squad Details");XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(history.map(h=>({"Auction No.":h.auctionNumber,Round:h.round,Player:h.player,Result:h.result,Team:h.team,"Final Price":h.price||0}))),"Auction History");let fu=(round===2?players:unsold).map(p=>({Player:p.name,Status:round===1?"PENDING AUCTION 2":"FINAL UNSOLD"}));XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(fu),"Final Unsold");let d=new Date(),z=n=>String(n).padStart(2,"0");XLSX.writeFile(wb,`SPL_Season_5_Auction_${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())}_${z(d.getHours())}-${z(d.getMinutes())}-${z(d.getSeconds())}.xlsx`)
+}
+
+// ============================================================
+// SPL PHOTO GALLERY — AUTO ROTATING IMAGE PREVIEW
+// ============================================================
+// IMPORTANT:
+// Add your image filenames below. The images must be stored in
+// the SAME FOLDER as this HTML file.
+//
+// Example:
+// const PHOTO_GALLERY = [
+//     "spl-photo-1.jpg",
+//     "spl-photo-2.jpg",
+//     "spl-photo-3.jpg",
+//     "spl-photo-4.jpg"
+// ];
+//
+// Supported formats: JPG, JPEG, PNG, WEBP, GIF
+// The gallery automatically changes every 4 seconds.
+// ============================================================
+const PHOTO_GALLERY = [
+    "spl-photo-1.jpg",
+    "spl-photo-2.jpg",
+    "spl-photo-3.jpg",
+    "spl-photo-4.jpg",
+    "spl-photo-5.jpg",
+    "spl-photo-6.jpg",
+    "spl-photo-7.jpeg"
+];
+
+let galleryIndex = 0;
+let galleryTimer = null;
+let galleryImages = [];
+
+function initGallery(){
+    const slides = $("gallerySlides");
+    const dots = $("galleryDots");
+    const status = $("galleryStatus");
+
+    if(!slides || !dots) return;
+
+    slides.innerHTML = "";
+    dots.innerHTML = "";
+    galleryImages = [];
+
+    // ------------------------------------------------------------
+    // Create each image and silently ignore filenames that do not
+    // exist. This lets you keep the default five slots or use fewer.
+    // ------------------------------------------------------------
+    PHOTO_GALLERY.forEach((file, index)=>{
+        const img = document.createElement("img");
+        img.className = "gallery-slide";
+        img.alt = `SPL Season 5 gallery image ${index + 1}`;
+        img.src = file;
+        img.loading = index === 0 ? "eager" : "lazy";
+
+        img.onload = ()=>{
+            galleryImages.push({img, file});
+            rebuildGalleryDots();
+
+            if(galleryImages.length === 1){
+                galleryIndex = 0;
+                showGallerySlide(0);
+                startGalleryTimer();
+            }
+
+            if(status){
+                status.textContent = `${galleryImages.length} gallery image${galleryImages.length === 1 ? "" : "s"} loaded`;
+            }
+        };
+
+        img.onerror = ()=>{
+            img.remove();
+            const remaining = PHOTO_GALLERY.length - index - 1;
+            if(remaining === 0 && galleryImages.length === 0){
+                if(status){
+                    status.textContent = "Add your gallery images and update PHOTO_GALLERY in the code.";
+                }
+            }
+        };
+
+        slides.appendChild(img);
+    });
+}
+
+function rebuildGalleryDots(){
+    const dots = $("galleryDots");
+    if(!dots) return;
+
+    dots.innerHTML = "";
+
+    galleryImages.forEach((item,index)=>{
+        const dot = document.createElement("button");
+        dot.type = "button";
+        dot.className = "gallery-dot";
+        dot.setAttribute("aria-label",`Show gallery image ${index + 1}`);
+        dot.onclick = ()=>{
+            galleryIndex = index;
+            showGallerySlide(galleryIndex);
+            restartGalleryTimer();
+        };
+        dots.appendChild(dot);
+    });
+
+    updateGalleryDots();
+}
+
+function showGallerySlide(index){
+    if(!galleryImages.length) return;
+
+    galleryIndex = (index + galleryImages.length) % galleryImages.length;
+
+    galleryImages.forEach((item,i)=>{
+        item.img.classList.toggle("active",i === galleryIndex);
+    });
+
+    updateGalleryDots();
+
+    const status = $("galleryStatus");
+    if(status){
+        const currentFile = galleryImages[galleryIndex].file;
+        status.textContent = `${galleryIndex + 1} / ${galleryImages.length} • ${currentFile}`;
+    }
+}
+
+function updateGalleryDots(){
+    document.querySelectorAll(".gallery-dot").forEach((dot,i)=>{
+        dot.classList.toggle("active",i === galleryIndex);
+    });
+}
+
+function nextGallery(){
+    if(!galleryImages.length) return;
+    showGallerySlide(galleryIndex + 1);
+    restartGalleryTimer();
+}
+
+function previousGallery(){
+    if(!galleryImages.length) return;
+    showGallerySlide(galleryIndex - 1);
+    restartGalleryTimer();
+}
+
+function startGalleryTimer(){
+    clearInterval(galleryTimer);
+    if(galleryImages.length > 1){
+        galleryTimer = setInterval(()=>showGallerySlide(galleryIndex + 1),4000);
+    }
+}
+
+function restartGalleryTimer(){
+    startGalleryTimer();
+}
+
+$("galleryPrev")?.addEventListener("click",previousGallery);
+$("galleryNext")?.addEventListener("click",nextGallery);
+
+// Pause the automatic rotation while the mouse is over the gallery.
+$("galleryFrame")?.addEventListener("mouseenter",()=>clearInterval(galleryTimer));
+$("galleryFrame")?.addEventListener("mouseleave",startGalleryTimer);
+
+
+init();
+initGallery();
+</script>
+</body>
+</html>
